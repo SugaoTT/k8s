@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: centos4
+spec:
+  nodeName: sugao-k8s-worker1
+  restartPolicy: OnFailure
+  containers:
+    - name: centos4
+      image: centos:7
+      command:
+        - "/sbin/init"

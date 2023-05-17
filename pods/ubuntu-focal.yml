@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-pod
+  labels:
+    app: ubuntu
+spec:
+  containers:
+    - name: ubuntu-container
+      image: sugaott/sugaott-ubuntu-focal:1.3
+      command: ["bash", "-c", "sleep infinity"]

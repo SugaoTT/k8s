@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    - name: my-container
+      image: alpine
+      command: ["apk", "add", "--no-cache", "iperf"]
+      volumeMounts:
+        - name: apk-volume
+          mountPath: /apk
+          readOnly: true
+  volumes:
+    - name: apk-volume
+      configMap:
+        name: my-apk-config

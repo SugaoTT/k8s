@@ -1,0 +1,39 @@
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: h5-net1
+spec:
+  config: >
+    {
+      "cniVersion": "0.3.0",
+      "type": "bridge",
+      "bridge": "h5-net1",
+      "ipam": {
+      }
+    }
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: h5
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "h5-net1"}
+    ]'
+spec: 
+  nodeName: sugao-k8s-worker1
+  containers:
+  - name: centos-tools
+    image: frrouting/frr:v8.1.0
+    command:
+    - /sbin/init
+    securityContext:
+      privileged: true
+    lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - "ip link set eth0 down"

@@ -1,0 +1,132 @@
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: h1-net1
+spec:
+  config: >
+    {
+      "cniVersion": "0.3.0",
+      "type": "bridge",
+      "bridge": "h1-net1",
+      "ipam": {
+      }
+    }
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: h2-net1
+spec:
+  config: >
+    {
+      "cniVersion": "0.3.0",
+      "type": "bridge",
+      "bridge": "h2-net1",
+      "ipam": {
+      }
+    }
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: h1
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "h1-net1"}
+    ]'
+spec: 
+  nodeName: sugao-k8s-worker1
+  containers:
+  - name: centos-tools
+    image: frrouting/frr:v8.1.0
+    command:
+    - /sbin/init
+    securityContext:
+      privileged: true
+    lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - "ip link set eth0 down"
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: h2
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "h2-net1"}
+    ]'
+spec: 
+  nodeName: sugao-k8s-worker1
+  containers:
+  - name: centos-tools
+    image: frrouting/frr:v8.1.0
+    command:
+    - /sbin/init
+    securityContext:
+      privileged: true
+    lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - "ip link set eth0 down"
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: s1-net1
+spec:
+  config: >
+    {
+      "cniVersion": "0.3.0",
+      "type": "bridge",
+      "bridge": "s1-net1",
+      "ipam": {
+      }
+    }
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: s1-net2
+spec:
+  config: >
+    {
+      "cniVersion": "0.3.0",
+      "type": "bridge",
+      "bridge": "s1-net2",
+      "ipam": {
+      }
+    }
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "s1-net1"},
+      {"name": "s1-net2"}
+    ]'
+spec:
+  nodeName: sugao-k8s-worker1
+  containers:
+    - name: s1
+      image: openshift/openvswitch:v3.9.0
+      command:
+        - /sbin/init
+      securityContext:
+        privileged: true
+      lifecycle:
+        postStart:
+          exec:
+            command:
+              - sh
+              - -c
+              - "/usr/share/openvswitch/scripts/ovs-ctl start;ovs-vsctl add-br Switch0;ovs-vsctl add-port Switch0 net1;ovs-vsctl add-port Switch0 net2;ip link set eth0 down"
