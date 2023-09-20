@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   name: centos1
 spec:
+  hostNetwork: true
   nodeName: sugao-k8s-worker4
   restartPolicy: OnFailure
   containers:

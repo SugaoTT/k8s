@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: klish
+spec: 
+  nodeName: sugao-k8s-worker1
+  containers:
+  - name: klish
+    image: docker7777777docker/klish_frr:v1
+    securityContext:
+      privileged: true

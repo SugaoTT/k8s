@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: b28f31e2-9674-464c-8438-2be57de3ab50
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "b28f31e2-9674-464c-8438-2be57de3ab50-net1"},
+      {"name": "b28f31e2-9674-464c-8438-2be57de3ab50-net2"},
+      {"name": connect-b28f31e2-9674-464c-8438-2be57de3ab50}
+    ]'
+spec: 
+  containers:
+  - name: b28f31e2-9674-464c-8438-2be57de3ab50
+    image: frrouting/frr:v8.1.0
+    command:
+    - /sbin/init
+    securityContext:
+      privileged: true
+    lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - "ip link set eth0 down"
