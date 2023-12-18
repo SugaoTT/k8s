@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: h1
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "h1-net1"}
+    ]'
+spec: 
+  nodeName: sugao-k8s-worker1
+  containers:
+  - name: h1
+    image: sugaott/sugaott-ubuntu-focal:1.4
+    command: ["bash", "-c", "sleep infinity"]
+    securityContext:
+      privileged: true
+    lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - "ip link set eth0 down; ip addr add 192.168.0.2/24 dev net1; ip route add default via 192.168.0.1"
